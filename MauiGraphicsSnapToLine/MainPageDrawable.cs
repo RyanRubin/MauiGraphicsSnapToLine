@@ -30,6 +30,8 @@ public class MainPageDrawable : IDrawable
         float angleRad = (float)Math.Atan2(dy, dx);
         float angleDeg = angleRad * 180 / (float)Math.PI;
 
+        bool isFlip = angleDeg < -90 || angleDeg > 90;
+
         float distance = (float)Math.Sqrt(dx * dx + dy * dy);
 
         float distanceBetween2Holes = distance / HolesCount;
@@ -40,22 +42,26 @@ public class MainPageDrawable : IDrawable
         canvas.SaveState();
         canvas.Rotate(angleDeg, x1, y1);
 
-        DrawLineWithArrow(canvas, x1 + distance - distanceBetween2Holes, y1 - LineSpacing,
-            x1 + distance, y1 - LineSpacing,
-            new float[] { 5, 5 }, distanceBetween2Holes.ToString("n2"), angleDeg);
+        float y;
+
+        y = y1 + (isFlip ? LineSpacing : -LineSpacing);
+        DrawLineWithArrow(canvas, x1 + distance - distanceBetween2Holes, y,
+            x1 + distance, y,
+            new float[] { 5, 5 }, distanceBetween2Holes.ToString("n2"), isFlip);
 
         DrawLineWithArrow(canvas, x1, y1,
             x1 + distance, y1,
             new float[] { 15, 15 });
 
-        DrawLineWithArrow(canvas, x1, y1 + LineSpacing,
-            x1 + distance, y1 + LineSpacing,
-            null, distance.ToString("n2"), angleDeg);
+        y = y1 + (isFlip ? -LineSpacing : LineSpacing);
+        DrawLineWithArrow(canvas, x1, y,
+            x1 + distance, y,
+            null, distance.ToString("n2"), isFlip);
 
         canvas.RestoreState();
     }
 
-    private void DrawLineWithArrow(ICanvas canvas, float x1, float y1, float x2, float y2, float[]? strokeDashPattern, string? text = null, float? angleDeg = null)
+    private void DrawLineWithArrow(ICanvas canvas, float x1, float y1, float x2, float y2, float[]? strokeDashPattern, string? text = null, bool? isFlip = null)
     {
         const int Spacing = 10;
 
@@ -77,7 +83,7 @@ public class MainPageDrawable : IDrawable
             canvas.FontSize = 15;
             canvas.Font = Microsoft.Maui.Graphics.Font.Default;
 
-            if (angleDeg < -90 || angleDeg > 90)
+            if (isFlip == true)
             {
                 canvas.SaveState();
                 canvas.Rotate(180, mx, y1 - Spacing);
