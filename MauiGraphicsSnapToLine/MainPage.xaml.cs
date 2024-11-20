@@ -1,25 +1,39 @@
-﻿namespace MauiGraphicsSnapToLine
+﻿namespace MauiGraphicsSnapToLine;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    public HolesDiagramSnapToLineViewModel SnapToLineVM { get; set; }
+
+    public MainPage()
     {
-        int count = 0;
+        InitializeComponent();
+        SnapToLineVM = new() { GraphicsView = graphicsView };
+        graphicsView.Drawable = new MainPageDrawable { SnapToLineVM = SnapToLineVM };
+    }
 
-        public MainPage()
+    private void GraphicsView_StartInteraction(object sender, TouchEventArgs e)
+    {
+        SnapToLineVM.IsSnapHolesToLine = true; // TODO
+
+        if (SnapToLineVM.IsSnapHolesToLine)
         {
-            InitializeComponent();
-        }
-
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            SnapToLineVM.StartSnapHolesToLine(e.Touches[0]);
         }
     }
 
+    private void GraphicsView_DragInteraction(object sender, TouchEventArgs e)
+    {
+        if (SnapToLineVM.IsSnapHolesToLine)
+        {
+            SnapToLineVM.SnapHolesToLine(e.Touches[0]);
+        }
+    }
+
+    private void GraphicsView_EndInteraction(object sender, TouchEventArgs e)
+    {
+        if (SnapToLineVM.IsSnapHolesToLine)
+        {
+            SnapToLineVM.EndSnapHolesToLine();
+        }
+    }
 }
