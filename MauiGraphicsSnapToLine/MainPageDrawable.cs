@@ -16,7 +16,11 @@ public class MainPageDrawable : IDrawable
             return;
         }
 
-        const int HolesCount = 5; // TODO
+        // TODO
+        foreach (var p in SnapToLineVM.SnapHolesToLineSpacedPoints)
+        {
+            canvas.DrawEllipse(p.X - 5, p.Y - 5, 10, 10);
+        }
 
         const int LineSpacing = 40;
 
@@ -34,7 +38,7 @@ public class MainPageDrawable : IDrawable
 
         float distance = (float)Math.Sqrt(dx * dx + dy * dy);
 
-        float distanceBetween2Holes = distance / HolesCount;
+        float distanceBetween2Holes = distance / (HolesDiagramSnapToLineViewModel.HolesCount - 1);
 
         canvas.StrokeColor = Colors.Blue;
         canvas.StrokeSize = 3;
@@ -61,21 +65,21 @@ public class MainPageDrawable : IDrawable
         canvas.RestoreState();
     }
 
-    private void DrawLineWithArrow(ICanvas canvas, float x1, float y1, float x2, float y2, float[]? strokeDashPattern, string? text = null, bool? isFlip = null)
+    private static void DrawLineWithArrow(ICanvas canvas, float x1, float y1, float x2, float y2, float[]? strokeDashPattern, string? text = null, bool? isFlip = null)
     {
         const int Spacing = 10;
 
-        float mx = (x1 + x2) / 2;
+        float midX = (x1 + x2) / 2;
 
         canvas.StrokeDashPattern = strokeDashPattern;
         canvas.DrawLine(x1, y1, x2, y2);
 
-        // draw t shaped arrow
-        DrawArrow(canvas, x1, y1, 10, 90, LeftOrRight.Left);
-        DrawArrow(canvas, x2, y2, 10, 90, LeftOrRight.Right);
+        // draw arrows as t-shapes
+        DrawLeftOrRightArrow(canvas, x1, y1, 10, 90, LeftOrRight.Left);
+        DrawLeftOrRightArrow(canvas, x2, y2, 10, 90, LeftOrRight.Right);
 
-        DrawArrow(canvas, x1, y1, 15, 30, LeftOrRight.Left);
-        DrawArrow(canvas, x2, y2, 15, 30, LeftOrRight.Right);
+        DrawLeftOrRightArrow(canvas, x1, y1, 15, 30, LeftOrRight.Left);
+        DrawLeftOrRightArrow(canvas, x2, y2, 15, 30, LeftOrRight.Right);
 
         if (!string.IsNullOrWhiteSpace(text))
         {
@@ -86,35 +90,35 @@ public class MainPageDrawable : IDrawable
             if (isFlip == true)
             {
                 canvas.SaveState();
-                canvas.Rotate(180, mx, y1 - Spacing);
-                canvas.DrawString(text, mx, y1 - Spacing * 3, HorizontalAlignment.Center);
+                canvas.Rotate(180, midX, y1 - Spacing);
+                canvas.DrawString(text, midX, y1 - Spacing * 3, HorizontalAlignment.Center);
                 canvas.RestoreState();
             }
             else
             {
-                canvas.DrawString(text, mx, y1 - Spacing, HorizontalAlignment.Center);
+                canvas.DrawString(text, midX, y1 - Spacing, HorizontalAlignment.Center);
             }
         }
     }
 
     private enum LeftOrRight { Left, Right }
-    private void DrawArrow(ICanvas canvas, float x, float y, float size, float angleDeg, LeftOrRight direction)
+    private static void DrawLeftOrRightArrow(ICanvas canvas, float x, float y, float size, float angleDeg, LeftOrRight direction)
     {
-        float sx = x;
-        float ex = x + (direction == LeftOrRight.Left ? size : -size);
+        float startX = x;
+        float endX = x + (direction == LeftOrRight.Left ? size : -size);
 
         canvas.StrokeDashPattern = null;
 
-        canvas.DrawLine(sx, y, ex, y);
+        canvas.DrawLine(startX, y, endX, y);
 
         canvas.SaveState();
-        canvas.Rotate(-angleDeg, sx, y);
-        canvas.DrawLine(sx, y, ex, y);
+        canvas.Rotate(-angleDeg, startX, y);
+        canvas.DrawLine(startX, y, endX, y);
         canvas.RestoreState();
 
         canvas.SaveState();
-        canvas.Rotate(angleDeg, sx, y);
-        canvas.DrawLine(sx, y, ex, y);
+        canvas.Rotate(angleDeg, startX, y);
+        canvas.DrawLine(startX, y, endX, y);
         canvas.RestoreState();
     }
 }
