@@ -9,6 +9,11 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         SnapToLineVM = new() { GraphicsView = graphicsView };
         graphicsView.Drawable = new MainPageDrawable { SnapToLineVM = SnapToLineVM };
+
+        Task.Run(async () =>
+        {
+            var result = await ImageTracerXyzFileParser.Parse("Image Tracer 1.xyz");
+        });
     }
 
     private void GraphicsView_StartInteraction(object sender, TouchEventArgs e)
