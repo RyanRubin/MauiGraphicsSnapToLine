@@ -17,10 +17,10 @@ public class MainPageDrawable : IDrawable
         }
 
         // TODO
-        foreach (var p in SnapToLineVM.SnapHolesToLineSpacedPoints)
-        {
-            canvas.DrawEllipse(p.X - 5, p.Y - 5, 10, 10);
-        }
+        //foreach (var p in SnapToLineVM.SnapHolesToLineSpacedPoints)
+        //{
+        //    canvas.DrawEllipse(p.X - 5, p.Y - 5, 10, 10);
+        //}
 
         const int LineSpacing = 40;
 
@@ -38,7 +38,7 @@ public class MainPageDrawable : IDrawable
 
         float distance = (float)Math.Sqrt(dx * dx + dy * dy);
 
-        float distanceBetween2Holes = distance / (HolesDiagramSnapToLineViewModel.HolesCount - 1);
+        //float distanceBetween2Holes = distance / (HolesDiagramSnapToLineViewModel.HolesCount - 1);
 
         canvas.StrokeColor = Colors.Blue;
         canvas.StrokeSize = 3;
@@ -48,19 +48,40 @@ public class MainPageDrawable : IDrawable
 
         float y;
 
+        //y = y1 + (isFlip ? LineSpacing : -LineSpacing);
+        //DrawLineWithArrow(canvas, x1 + distance - distanceBetween2Holes, y,
+        //    x1 + distance, y,
+        //    new float[] { 5, 5 }, distanceBetween2Holes.ToString("n2"), isFlip);
+
         y = y1 + (isFlip ? LineSpacing : -LineSpacing);
-        DrawLineWithArrow(canvas, x1 + distance - distanceBetween2Holes, y,
+        DrawLineWithArrow(canvas, x1, y,
             x1 + distance, y,
-            new float[] { 5, 5 }, distanceBetween2Holes.ToString("n2"), isFlip);
+            new float[] { 1, 1 }, distance.ToString("n2"), isFlip);
+
+        //DrawLineWithArrow(canvas, x1, y1,
+        //    x1 + distance, y1,
+        //    new float[] { 15, 15 });
 
         DrawLineWithArrow(canvas, x1, y1,
             x1 + distance, y1,
-            new float[] { 15, 15 });
+            null);
 
-        y = y1 + (isFlip ? -LineSpacing : LineSpacing);
-        DrawLineWithArrow(canvas, x1, y,
-            x1 + distance, y,
-            null, distance.ToString("n2"), isFlip);
+        //y = y1 + (isFlip ? -LineSpacing : LineSpacing);
+        //DrawLineWithArrow(canvas, x1, y,
+        //    x1 + distance, y,
+        //    null, distance.ToString("n2"), isFlip);
+
+        const int CircleSize = 50;
+        const int CircleHalfSize = CircleSize / 2;
+
+        canvas.FillColor = Colors.White;
+        canvas.FillEllipse(x1 - CircleHalfSize, y1 - CircleHalfSize, CircleSize, CircleSize);
+
+        canvas.DrawEllipse(x1 - CircleHalfSize, y1 - CircleHalfSize, CircleSize, CircleSize);
+
+        canvas.DrawLine(x1 + CircleHalfSize * 0.01f, (y1 - CircleHalfSize) - CircleHalfSize * 0.01f, x1 - CircleHalfSize, (y1 - CircleHalfSize) + CircleHalfSize);
+        canvas.DrawLine(x1 + CircleHalfSize * 0.75f, y1 - CircleHalfSize * 0.75f, x1 - CircleHalfSize * 0.75f, y1 + CircleHalfSize * 0.75f);
+        canvas.DrawLine(x1 + CircleHalfSize, (y1 + CircleHalfSize) - CircleHalfSize, x1 - CircleHalfSize * 0.01f, (y1 + CircleHalfSize) + CircleHalfSize * 0.01f);
 
         canvas.RestoreState();
     }
