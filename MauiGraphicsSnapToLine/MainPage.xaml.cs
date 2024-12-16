@@ -12,7 +12,10 @@ public partial class MainPage : ContentPage
 
         Task.Run(async () =>
         {
-            var result = await ImageTracerXyzFileParser.Parse("Image Tracer 1.xyz");
+            string? path = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
+            if (string.IsNullOrWhiteSpace(path)) return;
+            path = Path.Combine(path, "Image Tracer 1.xyz");
+            var result = await ImageTracerXyzFileParser.Parse(path);
         });
     }
 
